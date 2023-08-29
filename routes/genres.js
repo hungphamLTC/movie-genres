@@ -4,10 +4,10 @@ const {Genre, validate} = require('../models/genres');
 const express = require('express');
 const router = express.Router();
 
-router.get('/', async(req, res) => {
+router.get('/', async (req, res) => {
     const genres = await Genre.find().sort('name');
     res.send(genres);
-});
+  });
 
 router.get('/:id', async(req, res) => {
     const genre = await Genre.findById(req.params.id);
