@@ -32,7 +32,6 @@ if (!config.get('jwtPrivateKey')) {
 mongoose.set('strictQuery', false)
 mongoose.connect('mongodb://127.0.0.1:27017/movies')
     .then(() => console.log('MongoDB Connected...'))
-    .catch(err => console.error('Cound not connect to MongoDB'))
 
 app.use(express.json());
 app.use('/api/genres', genres);
