@@ -1,6 +1,7 @@
-const {Rental, validate} = require('../models/rentals'); 
-const {Movie} = require('../models/movies'); 
-const {Customer} = require('../models/customer'); 
+//const {Rental, validate} = require('../models/rentals'); 
+const {Rental} = require('../models/rentals'); 
+// const {Movie} = require('../models/movies'); 
+// const {Customer} = require('../models/customer'); 
 //const Fawn = require('fawn');
 const express = require('express');
 const router = express.Router();
@@ -60,59 +61,59 @@ router.get('/', async (req, res) => {
 //   }
 // });
 
-router.post('/', async (req, res) => {
-  const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+// router.post('/', async (req, res) => {
+//   const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
-  try {
-    await client.connect();
+//   try {
+//     await client.connect();
 
-    const session = client.startSession();
-    session.startTransaction();
+//     const session = client.startSession();
+//     session.startTransaction();
 
-    try {
-      const { error } = validate(req.body); 
-      if (error) return res.status(400).send(error.details[0].message);
+//     try {
+//       const { error } = validate(req.body); 
+//       if (error) return res.status(400).send(error.details[0].message);
 
-      const customer = await Customer.findById(req.body.customerId);
-      if (!customer) throw new Error('Invalid customer.');
+//       const customer = await Customer.findById(req.body.customerId);
+//       if (!customer) throw new Error('Invalid customer.');
 
-      const movie = await Movie.findById(req.body.movieId);
-      if (!movie) throw new Error('Invalid movie.');
+//       const movie = await Movie.findById(req.body.movieId);
+//       if (!movie) throw new Error('Invalid movie.');
 
-      if (movie.numberInStock === 0) throw new Error('Movie not in stock.');
+//       if (movie.numberInStock === 0) throw new Error('Movie not in stock.');
 
-      const rental = new Rental({
-        customer: {
-          _id: customer._id,
-          name: customer.name,
-          phone: customer.phone,
-        },
-        movie: {
-          _id: movie._id,
-          title: movie.title,
-          dailyRentalRate: movie.dailyRentalRate,
-        },
-      });
+//       const rental = new Rental({
+//         customer: {
+//           _id: customer._id,
+//           name: customer.name,
+//           phone: customer.phone,
+//         },
+//         movie: {
+//           _id: movie._id,
+//           title: movie.title,
+//           dailyRentalRate: movie.dailyRentalRate,
+//         },
+//       });
 
-      await rental.save();
-      movie.numberInStock--;
+//       await rental.save();
+//       movie.numberInStock--;
 
-      await rental.save();
-      await movie.save();
+//       await rental.save();
+//       await movie.save();
 
-      await session.commitTransaction();
-      session.endSession();
+//       await session.commitTransaction();
+//       session.endSession();
 
-      res.send(rental);
-    } catch (ex) {
-      await session.abortTransaction();
-      session.endSession();
-      throw ex;
-    }
-  } finally {
-    client.close();
-  }
-});
+//       res.send(rental);
+//     } catch (ex) {
+//       await session.abortTransaction();
+//       session.endSession();
+//       throw ex;
+//     }
+//   } finally {
+//     client.close();
+//   }
+// });
 
 router.get('/:id', async (req, res) => {
   const rental = await Rental.findById(req.params.id);
